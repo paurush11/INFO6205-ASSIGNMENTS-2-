@@ -1,9 +1,23 @@
 package edu.neu.coe.info6205.threesum;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
+import javax.swing.JFrame;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import edu.neu.coe.info6205.util.Stopwatch;
 
 /**
  * Implementation of ThreeSum which follows the approach of dividing the solution-space into
@@ -50,8 +64,133 @@ public class ThreeSumQuadraticWithCalipers implements ThreeSum {
         List<Triple> triples = new ArrayList<>();
         // FIXME : use function to qualify triples and to navigate otherwise.
         // END 
+        Arrays.sort(a);
+
+		if (i == 0 || (i > 0 && a[i] != a[i - 1])) {
+
+			int lo = i + 1, hi = a.length - 1, sum = 0 - a[i];
+
+			while (lo < hi) {
+
+				if (a[lo] + a[hi] == sum) {
+
+					Triple temp = new Triple(a[i], a[lo], a[hi]);
+
+					triples.add(temp);
+
+					while (lo < hi && a[lo] == a[lo + 1]) {
+						
+						lo++;
+					}
+					
+					while (lo < hi && a[hi] == a[hi - 1]) {
+						
+						hi--;
+					}
+
+					lo++;
+					
+					hi--;
+					
+				} else if (a[lo] + a[hi] < sum) {
+					
+					lo++;
+					
+				} else {
+					
+					hi--;
+				}
+			}
+		}
         return triples;
     }
+    
+    public static void main(String[] args) {
+		Supplier<int[]> intsSupplier = null;
+		int[] ints = null; 
+		List<int[]> listOfArrays = new ArrayList<>();
+		List<Integer> nValues = new ArrayList<>();
+		List<Double> nValues1 = new ArrayList<>();
+		double factor = 1.5;
+		
+		for (int i = 1; i <= 8; i++) {
+			factor *= 2; 
+			intsSupplier = new Source((int)(100 * factor), 2).intsSupplier(10);
+			ints = intsSupplier.get();
+			listOfArrays.add(ints);
+			nValues.add((int)(factor * 100));
+			nValues1.add(Math.log(factor * 100));
+		}
+		
+		List<Double> times = new ArrayList<>();
+		List<Double> times1 = new ArrayList<>();
+
+		listOfArrays.forEach(arr -> {
+			try (Stopwatch watch = new Stopwatch()) {
+				Arrays.sort(arr);
+				ThreeSum target = new ThreeSumQuadraticWithCalipers(arr);
+				Triple[] triples = target.getTriples();
+				double timeEnd =  watch.lap();
+				times.add(timeEnd);
+				times1.add(Math.log(timeEnd));
+			}
+		});
+
+		plot(nValues, times);
+		plot1(nValues1, times1);
+	}
+    private static void plot(List<Integer> nValues, List<Double> times) {
+
+		XYSeries series = new XYSeries("Paurush Batish - 002755631");
+
+		System.out.println("\nThree Sum Quadratic With Calipers:");
+		for (int i = 0; i < nValues.size(); i++) {
+			int xval = nValues.get(i);
+			double yval = times.get(i);
+			System.out.println(" x : " + xval + " y : " + yval);
+
+			series.add(xval, yval);
+		}
+
+		XYDataset dataset = new XYSeriesCollection(series);
+
+		JFreeChart chart = ChartFactory.createXYLineChart("Paurush Batish - 002755631", "ArrayLength", "Time", dataset,
+				PlotOrientation.VERTICAL, false, false, false);
+		ChartPanel panel = new ChartPanel(chart);
+		JFrame frame = new JFrame("Three Sum Quadratic With Calipers plots");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(panel);
+		frame.setSize(800, 600);
+		frame.setVisible(true);
+	}
+
+	private static void plot1(List<Double> nValues1, List<Double> times1) {
+
+		XYSeries series = new XYSeries("Paurush Batish - 002755631");
+		System.out.println("\nThree Sum Quadratic With Calipers log plots:");
+		
+		for (int i = 0; i < nValues1.size(); i++) {
+				double xval = nValues1.get(i);
+				double yval = times1.get(i);
+				if (!Double.isInfinite(yval)) {
+					System.out.println(" x : " + xval + " y : " + yval);
+					series.add(xval, yval);
+				}
+		}
+
+		XYDataset dataset = new XYSeriesCollection(series);
+
+		JFreeChart chart = ChartFactory.createXYLineChart("Paurush Batish - 002755631", "ArrayLength", "Time", dataset,
+				PlotOrientation.VERTICAL, false, false, false);
+		ChartPanel panel = new ChartPanel(chart);
+		JFrame frame = new JFrame("Three Sum Quadratic With Calipers log plots:");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(panel);
+		frame.setSize(800, 600);
+		frame.setVisible(true);
+	}
+
+   
 
     private final int[] a;
     private final int length;

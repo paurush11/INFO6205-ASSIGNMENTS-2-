@@ -269,10 +269,10 @@ public class ShellSort<X extends Comparable<X>> extends SortWithHelper<X> {
             if (stringArgs.size() >= 2) {
                 Config config = Config.load();
                 Seq<String> operands = stringArgs.operands();
-                int m = Integer.parseInt(operands.head());
-                int n = Integer.parseInt(operands.apply(1));
+//                int m = Integer.parseInt(operands.head());
+//                int n = Integer.parseInt(operands.apply(1));
 //                showRandomDoubleShellSortResult(1, n, config);
-                showRandomDoubleShellSortResult(m, n, config);
+//                showRandomDoubleShellSortResult(m, n, config);
             } else
                 System.err.println("Syntax error (too few arguments): " + Arrays.toString(args));
         } else
