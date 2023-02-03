@@ -18,6 +18,14 @@ public class InsertionSortBasic {
 
     private void swap(int i, Object[] a) {
         // FIXME
+
+    	for (int j = i; j > 0; j--) {
+            if (Integer.parseInt(a[j].toString()) > Integer.parseInt(a[j-1].toString())) {
+                swap(a, j, j - 1);
+            } else {
+                break;
+            }
+        }
         // END 
     }
 
