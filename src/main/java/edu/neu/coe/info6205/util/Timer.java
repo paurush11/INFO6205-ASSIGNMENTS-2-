@@ -55,20 +55,20 @@ public class Timer {
      * @return the average milliseconds per repetition.
      */
     public <T, U> double repeat(int n, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {         
-    	 pause(); // pause the timer
-         T preFunctioninputt = supplier.get();
+    	pause();
           for (int i = 0; i < n; i++) {
+        	  T t = supplier.get();
               if (preFunction != null)
-             	 preFunctioninputt = preFunction.apply(supplier.get()); // getting the supply not timed
-              resume(); // start the timer again
-              U u = function.apply(preFunctioninputt); // this will be timed !!!
-              pauseAndLap(); //pause the timer postFunction !!
+             	 t = preFunction.apply(t); 
+              resume(); 
+              U u = function.apply(t); 
+              pauseAndLap();
               if (postFunction != null) 
-             	 postFunction.accept(u);
+             	 postFunction.accept(u);   
           }
           final double result = meanLapTime();
           return result;
-        
+
     }
 
     /**
